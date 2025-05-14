@@ -1,7 +1,6 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 
-# Декоратор для обробки помилок
 
 def input_error(func):
     def wrapper(*args, **kwargs):
@@ -15,7 +14,7 @@ def input_error(func):
             return "Контакт не знайдено."
     return wrapper
 
-# Базове поле
+
 class Field:
     def __init__(self, value):
         self.value = value
@@ -100,9 +99,12 @@ class AddressBook(UserDict):
                 diff = (bday_this_year - today).days
                 if 0 <= diff <= 7:
                     greet_date = bday_this_year
-                    if greet_date.weekday() >= 5:
+                    if greet_date.weekday() >= 5:  
                         greet_date += timedelta(days=(7 - greet_date.weekday()))
-                    upcoming.append({"name": record.name.value, "birthday": greet_date.strftime("%d.%m.%Y")})
+                    upcoming.append({
+                        "name": record.name.value,
+                        "birthday": greet_date.strftime("%d.%m.%Y")
+                    })
         return upcoming
 
     def __str__(self):
@@ -162,7 +164,9 @@ def birthdays(args, book):
 
 def parse_input(user_input):
     parts = user_input.strip().split()
-    return parts[0], parts[1:]
+    if not parts:
+        return "", []
+    return parts[0].lower(), parts[1:]
 
 def main():
     book = AddressBook()
@@ -170,6 +174,9 @@ def main():
     while True:
         user_input = input("Enter a command: ")
         command, args = parse_input(user_input)
+
+        if not command:
+            continue
 
         if command in ["close", "exit"]:
             print("Good bye!")
